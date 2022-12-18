@@ -1,7 +1,6 @@
 package com.chaikouski.webcrawler.controller;
 
 import com.chaikouski.webcrawler.model.entity.Seed;
-import com.chaikouski.webcrawler.model.service.RequestParams;
 import com.chaikouski.webcrawler.model.service.SeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.chaikouski.webcrawler.model.service.RequestParams.*;
+import static com.chaikouski.webcrawler.model.service.RequestParams.LIMIT;
+import static com.chaikouski.webcrawler.model.service.RequestParams.SEARCH;
 
 @RestController
 @RequestMapping("api/v1/seeds")
@@ -22,8 +22,7 @@ public class CrawlerController {
     public List<Seed> addSeedAnalyticData(@RequestParam(value = "seed") String seed,
                                           @RequestParam(value = "terms") String terms) {
 
-        return null;
-
+        return seedService.addSeedData(seed, terms);
     }
 
     @GetMapping
