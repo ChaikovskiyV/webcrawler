@@ -12,12 +12,12 @@ public class Term {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     private String termName;
-    private int repetitionsNumber;
+    private long repetitionsNumber;
     @ManyToMany(mappedBy = "terms")
     @JsonIgnore
     private List<Seed> seeds;
 
-    public Term(String termName, int repetitionsNumber) {
+    public Term(String termName, long repetitionsNumber) {
         this.termName = termName;
         this.repetitionsNumber = repetitionsNumber;
     }
@@ -33,19 +33,19 @@ public class Term {
         this.id = id;
     }
 
-    public String gettermName() {
+    public String getTermName() {
         return termName;
     }
 
-    public void settermName(String termName) {
+    public void setTermName(String termName) {
         this.termName = termName;
     }
 
-    public int getRepetitionsNumber() {
+    public long getRepetitionsNumber() {
         return repetitionsNumber;
     }
 
-    public void setRepetitionsNumber(int repetitionsNumber) {
+    public void setRepetitionsNumber(long repetitionsNumber) {
         this.repetitionsNumber = repetitionsNumber;
     }
 
