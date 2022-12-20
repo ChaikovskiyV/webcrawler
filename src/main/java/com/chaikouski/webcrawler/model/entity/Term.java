@@ -6,7 +6,8 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity(name = "terms")
+@Entity
+@Table(name = "terms")
 public class Term {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
