@@ -4,7 +4,8 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity(name = "seeds")
+@Entity
+@Table(name = "seeds")
 public class Seed {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -33,11 +34,11 @@ public class Seed {
         this.id = id;
     }
 
-    public String geturl() {
+    public String getUrl() {
         return url;
     }
 
-    public void seturl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
