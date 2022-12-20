@@ -47,6 +47,13 @@ public class SeedDaoImpl implements SeedDao {
                 .getResultList();
     }
 
+    @Override
+    public List<Seed> getSeedsByUrl(String url) {
+        return entityManager.createQuery(GET_ALL_SEEDS_QUERY + BY_URL, Seed.class)
+                .setParameter(1, url)
+                .getResultList();
+    }
+
     private String buildLikeParam(String param) {
         String delimiter = "%";
         return new StringBuilder(delimiter)

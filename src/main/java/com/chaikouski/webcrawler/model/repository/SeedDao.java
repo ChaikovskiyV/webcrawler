@@ -14,4 +14,6 @@ public interface SeedDao {
     List<Seed> getSeedsWithLimitedResult(int limit);
 
     List<Seed> getSeedsBySearchParamWithLimitedResult(String search, int limit);
+
+    List<Seed> getSeedsByUrl(String url);
 }
