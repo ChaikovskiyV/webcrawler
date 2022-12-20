@@ -3,6 +3,7 @@ package com.chaikouski.webcrawler.model.service.impl;
 import com.chaikouski.webcrawler.model.entity.Seed;
 import com.chaikouski.webcrawler.model.entity.Term;
 import com.chaikouski.webcrawler.model.repository.SeedDao;
+import com.chaikouski.webcrawler.model.repository.TermDao;
 import com.chaikouski.webcrawler.model.service.SeedService;
 import com.chaikouski.webcrawler.model.util.Crawler;
 import org.jsoup.nodes.Document;
@@ -22,11 +23,13 @@ import static com.chaikouski.webcrawler.model.service.RequestParams.SEARCH;
 @Service
 public class SeedServiceImpl implements SeedService {
     private final SeedDao seedDao;
+    private final TermDao termDao;
     private final Crawler crawler;
 
     @Autowired
-    public SeedServiceImpl(SeedDao seedDao, Crawler crawler) {
+    public SeedServiceImpl(SeedDao seedDao, TermDao termDao, Crawler crawler) {
         this.seedDao = seedDao;
+        this.termDao = termDao;
         this.crawler = crawler;
     }
 
@@ -36,7 +39,15 @@ public class SeedServiceImpl implements SeedService {
         List<Seed> seeds = new ArrayList<>();
 
         if (url != null && terms != null) {
-            getSeedList(url, terms).forEach(seed -> seeds.add(seedDao.addSeed(seed)));
+            getSeedList(url, terms).forEach(seed -> {
+                Seed existed = findExistedSeed(seed);
+
+                if (existed != null) {
+                    seeds.add(existed);
+                } else {
+                    seeds.add(seedDao.addSeed(seed));
+                }
+            });
         }
 
         return seeds;
@@ -70,8 +81,8 @@ public class SeedServiceImpl implements SeedService {
         String[] termArr = terms.toLowerCase().split(delimiter);
         List<Document> documents = crawler.crawl(url);
 
-        documents.forEach(d -> {
-            String text = d.text().toLowerCase();
+        documents.forEach(doc -> {
+            String text = doc.text().toLowerCase();
             List<Term> termList = new ArrayList<>();
 
             for (String term : termArr) {
@@ -79,13 +90,19 @@ public class SeedServiceImpl implements SeedService {
                 Matcher matcher = pattern.matcher(text);
                 long termRepetition = matcher.results().count();
 
-                termList.add(createTerm(term, termRepetition));
+                termList.add(getTerm(term, termRepetition));
             }
 
-            seeds.add(createSeed(d.baseUri(), termList));
+            seeds.add(createSeed(doc.baseUri(), termList));
         });
 
         return seeds;
+    }
+
+    private Term getTerm(String term, long repetitions) {
+        List<Term> existed = termDao.getTermsByNameAndRepetition(term, repetitions);
+
+        return existed != null ? existed.get(0) : createTerm(term, repetitions);
     }
 
     private Seed createSeed(String url, List<Term> terms) {
@@ -94,5 +111,14 @@ public class SeedServiceImpl implements SeedService {
 
     private Term createTerm(String term, long repetitions) {
         return new Term(term, repetitions);
+    }
+
+    private Seed findExistedSeed(Seed seed) {
+        List<Seed> seeds = seedDao.getSeedsByUrl(seed.getUrl());
+
+        return seeds.stream()
+                .filter(s -> s.getTerms().equals(seed.getTerms()))
+                .findAny()
+                .orElse(null);
     }
 }
