@@ -1,11 +1,14 @@
 package com.chaikouski.webcrawler.model.service.impl;
 
+import com.chaikouski.webcrawler.model.dto.SeedDataDto;
+import com.chaikouski.webcrawler.model.dto.SeedDataDtoFactory;
 import com.chaikouski.webcrawler.model.entity.Seed;
 import com.chaikouski.webcrawler.model.entity.Term;
 import com.chaikouski.webcrawler.model.repository.SeedDao;
 import com.chaikouski.webcrawler.model.repository.TermDao;
 import com.chaikouski.webcrawler.model.service.SeedService;
 import com.chaikouski.webcrawler.model.util.Crawler;
+import com.chaikouski.webcrawler.model.util.CsvWriter;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.chaikouski.webcrawler.model.service.RequestParams.LIMIT;
 import static com.chaikouski.webcrawler.model.service.RequestParams.SEARCH;
@@ -25,17 +29,19 @@ public class SeedServiceImpl implements SeedService {
     private final SeedDao seedDao;
     private final TermDao termDao;
     private final Crawler crawler;
+    private final CsvWriter csvWriter;
 
     @Autowired
-    public SeedServiceImpl(SeedDao seedDao, TermDao termDao, Crawler crawler) {
+    public SeedServiceImpl(SeedDao seedDao, TermDao termDao, Crawler crawler, CsvWriter csvWriter) {
         this.seedDao = seedDao;
         this.termDao = termDao;
         this.crawler = crawler;
+        this.csvWriter = csvWriter;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<Seed> addSeedData(String url, String terms) {
+    public List<SeedDataDto> addSeedData(String url, String terms) {
         List<Seed> seeds = new ArrayList<>();
 
         if (url != null && terms != null) {
@@ -50,12 +56,15 @@ public class SeedServiceImpl implements SeedService {
             });
         }
 
-        return seeds;
+        List<SeedDataDto> seedData = convertToSeedDataDtoList(seeds);
+        writeDataToFile(seedData);
+
+        return seedData;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<Seed> getSeedData(Map<String, Object> requestParams) {
+    public List<SeedDataDto> getSeedData(Map<String, Object> requestParams) {
         List<Seed> seeds;
 
         String search = (String) requestParams.get(SEARCH);
@@ -71,7 +80,7 @@ public class SeedServiceImpl implements SeedService {
             seeds = seedDao.getAllSeeds();
         }
 
-        return seeds;
+        return convertToSeedDataDtoList(seeds);
     }
 
     private List<Seed> getSeedList(String url, String terms) {
@@ -102,7 +111,7 @@ public class SeedServiceImpl implements SeedService {
     private Term getTerm(String term, long repetitions) {
         List<Term> existed = termDao.getTermsByNameAndRepetition(term, repetitions);
 
-        return existed != null ? existed.get(0) : createTerm(term, repetitions);
+        return existed.isEmpty() ? createTerm(term, repetitions) : existed.get(0);
     }
 
     private Seed createSeed(String url, List<Term> terms) {
@@ -120,5 +129,19 @@ public class SeedServiceImpl implements SeedService {
                 .filter(s -> s.getTerms().equals(seed.getTerms()))
                 .findAny()
                 .orElse(null);
+    }
+
+    private List<SeedDataDto> convertToSeedDataDtoList(List<Seed> seeds) {
+        return seeds.stream()
+                .map(SeedDataDtoFactory::createSeedDataDto)
+                .collect(Collectors.toList());
+    }
+
+    private void writeDataToFile(List<SeedDataDto> seedDataDtos) {
+        List<String> seedData = seedDataDtos.stream()
+                .map(SeedDataDto::getSeedData)
+                .collect(Collectors.toList());
+
+        csvWriter.writeDataToCsvFile(seedData);
     }
 }
