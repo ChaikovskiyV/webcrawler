@@ -1,6 +1,6 @@
 package com.chaikouski.webcrawler.controller;
 
-import com.chaikouski.webcrawler.model.entity.Seed;
+import com.chaikouski.webcrawler.model.dto.SeedDataDto;
 import com.chaikouski.webcrawler.model.service.SeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +19,15 @@ public class CrawlerController {
     private SeedService seedService;
 
     @PostMapping
-    public List<Seed> addSeedAnalyticData(@RequestParam(value = "seed") String seed,
-                                          @RequestParam(value = "terms") String terms) {
+    public List<SeedDataDto> addSeedAnalyticData(@RequestParam(value = "seed") String seed,
+                                                 @RequestParam(value = "terms") String terms) {
 
         return seedService.addSeedData(seed, terms);
     }
 
     @GetMapping
-    public List<Seed> getSeedAnalyticData(@RequestParam(value = "search", required = false) String search,
-                                          @RequestParam(value = "limit", required = false) Integer limit) {
+    public List<SeedDataDto> getSeedAnalyticData(@RequestParam(value = "search", required = false) String search,
+                                                 @RequestParam(value = "limit", required = false) Integer limit) {
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put(SEARCH, search);
         requestParams.put(LIMIT, limit);
