@@ -1,6 +1,6 @@
 Rest api Web crawler
 
-This rest api is created using Java, Spring Framework(Boot, Data, Test), PostgreSQL, REST api, JUnit and Mockito
+This rest api is created using Java, Spring Framework(Boot, Data, Test), Jsoup, PostgreSQL, REST api, JUnit and Mockito
 
 The web crawler uses input data such as URL and terms set, discovers a web resource with this URL and collects data on how many times these terms occur in the web resource. Also, the web crawler find other URLs in the web resource and gains the same data.   
 
@@ -14,6 +14,8 @@ To run this rest api you need:
 - open terminal, go to the package with this api and run the command ./gradlew bootRun;
 
 - by default, this api runs on the port 8088, if you need another port you can change the 'server.port' property in the 'src/main/resources/application.properties' file to meaning that suits you;
+
+- after rest api was run you can find reports about test code coverage in the directory 'build/reports/jacoco/test'.
 
 The api handles following endpoints(for localhost):
 
@@ -31,13 +33,13 @@ http://localhost:8088/api/v1/seeds - get all result from database; this request 
     - limit - the number of first results those will be received;
     - search - search by  part of term or url.
 
-Output data has Json format as:
+Output data has Json format and looks like:
 
-{[{
+[
+{
 'seedData':'anyURL 1 5 7 13'
 },
 {
 'seedData':'anyURL 2 6 8 16'
 }
 ]
-}
