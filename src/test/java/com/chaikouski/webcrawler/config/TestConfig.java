@@ -17,7 +17,7 @@ import javax.sql.DataSource;
  * Includes the configuration for tests.
  */
 @Configuration
-@PropertySource("/application-test.properties")
+@PropertySource("classpath:/application-test.properties")
 public class TestConfig {
     private static final String TEST_SCHEMA = "classpath:base/testschema.sql";
     private static final String TEST_DATA = "classpath:base/testdata.sql";
