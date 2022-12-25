@@ -2,13 +2,31 @@ package com.chaikouski.webcrawler.model.dto;
 
 import java.util.Objects;
 
+/**
+ * @author Viktar Chaikouski
+ *
+ * The type SeedDataDto.
+ *
+ * This class transfers data about seed
+ */
 public class SeedDataDto {
     private final String seedData;
 
+    /**
+     * Instantiates a new SeedDataDto.
+     *
+     * @param url             the url
+     * @param termRepetitions the term repetitions
+     */
     public SeedDataDto(String url, String termRepetitions) {
         seedData = String.join("", url, termRepetitions);
     }
 
+    /**
+     * Gets seed data.
+     *
+     * @return the seed data
+     */
     public String getSeedData() {
         return seedData;
     }

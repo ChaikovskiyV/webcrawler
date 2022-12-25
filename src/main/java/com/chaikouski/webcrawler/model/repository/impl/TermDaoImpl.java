@@ -9,6 +9,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+/**
+ * @author Viktar Chaikouski
+ *
+ * The type TermDaoImpl.
+ *
+ * Implements interface TermDao
+ */
 @Repository
 public class TermDaoImpl implements TermDao {
     @PersistenceContext

@@ -14,17 +14,48 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Viktar Chaikouski
+ *
+ * The type CrawlerControllerIntegrationTest.
+ *
+ * Includes integration tests for testing the WebCrawlerApplication.
+ */
 @SpringBootTest(classes = WebCrawlerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(TestConfig.class)
 class CrawlerControllerIntegrationTest {
+    /**
+     * The constant LOCAL_HOST.
+     */
     public static final String LOCAL_HOST = "http://localhost:";
+    /**
+     * The constant URI.
+     */
     public static final String URI = "/api/v1/seeds";
+    /**
+     * The constant SEED_PARAM.
+     */
     public static final String SEED_PARAM = "seed=";
+    /**
+     * The constant TERMS_PARAM.
+     */
     public static final String TERMS_PARAM = "terms=";
+    /**
+     * The constant SEARCH_PARAM.
+     */
     public static final String SEARCH_PARAM = "search=";
+    /**
+     * The constant LIMIT_PARAM.
+     */
     public static final String LIMIT_PARAM = "limit=";
+    /**
+     * The Seed.
+     */
     public String seed;
+    /**
+     * The Terms.
+     */
     public String terms;
     private String url;
     private int limit;
@@ -37,6 +68,9 @@ class CrawlerControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    /**
+     * Init.
+     */
     @BeforeAll
     void init() {
         url = new StringBuilder().append(LOCAL_HOST)
@@ -48,16 +82,25 @@ class CrawlerControllerIntegrationTest {
         search = "firstTerm";
     }
 
+    /**
+     * SetsUp.
+     */
     @BeforeEach
     void setUp() {
         result = List.of();
         limit = 3;
     }
 
+    /**
+     * TearDown.
+     */
     @AfterEach
     void tearDown() {
     }
 
+    /**
+     * Tests the addSeedData method when no parameters are provided..
+     */
     @Test
     void addSeedDataTestWhenNoParametersProvided() {
         String parameterizedUrl = new StringBuilder(url)
@@ -73,6 +116,9 @@ class CrawlerControllerIntegrationTest {
         assertTrue(result.isEmpty());
     }
 
+    /**
+     * Tests the addSeedData method when seed parameter is not provided.
+     */
     @Test
     void addSeedDataTestWhenSeedParameterNotProvided() {
         String parameterizedUrl = new StringBuilder(url)
@@ -88,6 +134,9 @@ class CrawlerControllerIntegrationTest {
         assertTrue(result.isEmpty());
     }
 
+    /**
+     * Tests the addSeedData method when terms parameter is not provided.
+     */
     @Test
     void addSeedDataTestWhenTermsParameterNotProvided() {
         String parameterizedUrl = new StringBuilder(url)
@@ -103,6 +152,9 @@ class CrawlerControllerIntegrationTest {
         assertTrue(result.isEmpty());
     }
 
+    /**
+     * Tests the addSeedData method when seed and terms are provided.
+     */
     @Test
     void addSeedDataTestWhenSeedAndTermsProvided() {
         String parameterizedUrl = new StringBuilder(url)
@@ -119,6 +171,9 @@ class CrawlerControllerIntegrationTest {
         assertFalse(result.isEmpty());
     }
 
+    /**
+     * Tests the getSeedData method when no parameters are provided.
+     */
     @Test
     void getSeedDataTestWhenNoParametersProvided() {
         result = restTemplate.getForObject(url, List.class);
@@ -126,6 +181,9 @@ class CrawlerControllerIntegrationTest {
         assertFalse(result.isEmpty());
     }
 
+    /**
+     * Tests the getSeedData method when search parameter is provided.
+     */
     @Test
     void getSeedDataTestWhenSearchParameterProvided() {
         String parameterizedUrl = new StringBuilder(url)
@@ -138,6 +196,9 @@ class CrawlerControllerIntegrationTest {
         assertFalse(result.isEmpty());
     }
 
+    /**
+     * Tests the getSeedData method when limit parameter is provided.
+     */
     @Test
     void getSeedDataTestWhenLimitParameterProvided() {
         String parameterizedUrl = new StringBuilder(url)
@@ -150,6 +211,9 @@ class CrawlerControllerIntegrationTest {
         assertEquals(limit, result.size());
     }
 
+    /**
+     * Tests the getSeedData method when search and limit parameters are provided.
+     */
     @Test
     void getSeedDataTestWhenSearchAndLimitParametersProvided() {
         limit = 4;

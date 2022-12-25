@@ -24,6 +24,13 @@ import java.util.stream.Collectors;
 import static com.chaikouski.webcrawler.model.service.RequestParams.LIMIT;
 import static com.chaikouski.webcrawler.model.service.RequestParams.SEARCH;
 
+/**
+ * @author Viktar Chaikouski
+ * <p>
+ * The type SeedServiceImpl.
+ * <p>
+ * Implements the SeedService interface
+ */
 @Service
 public class SeedServiceImpl implements SeedService {
     private final SeedDao seedDao;
@@ -31,6 +38,14 @@ public class SeedServiceImpl implements SeedService {
     private final Crawler crawler;
     private final CsvWriter csvWriter;
 
+    /**
+     * Instantiates a new Seed service.
+     *
+     * @param seedDao   the seedDao
+     * @param termDao   the termDao
+     * @param crawler   the crawler
+     * @param csvWriter the csvWriter
+     */
     @Autowired
     public SeedServiceImpl(SeedDao seedDao, TermDao termDao, Crawler crawler, CsvWriter csvWriter) {
         this.seedDao = seedDao;
@@ -83,6 +98,8 @@ public class SeedServiceImpl implements SeedService {
         return convertToSeedDataDtoList(seeds);
     }
 
+    /*Gains list of documents from crawler,
+    extracts required data to create a seed object and return list of Seed objects*/
     private List<Seed> getSeedList(String url, String terms) {
         List<Seed> seeds = new ArrayList<>();
         String delimiter = ", ";
@@ -108,6 +125,7 @@ public class SeedServiceImpl implements SeedService {
         return seeds;
     }
 
+    /*Calls the method of the repository layer to receive terms those suit provided parameters.*/
     private Term getTerm(String term, long repetitions) {
         List<Term> existed = termDao.getTermsByNameAndRepetition(term, repetitions);
 
@@ -122,6 +140,8 @@ public class SeedServiceImpl implements SeedService {
         return new Term(term, repetitions);
     }
 
+    /*Calls the method of the repository layer to find the same seed in database and returns it.
+     * Returns null if nothing was found*/
     private Seed findExistedSeed(Seed seed) {
         List<Seed> seeds = seedDao.getSeedsByUrl(seed.getUrl());
 
@@ -131,12 +151,14 @@ public class SeedServiceImpl implements SeedService {
                 .orElse(null);
     }
 
+    /*Converts list of Seed objects to the list of SeedDataDto objects*/
     private List<SeedDataDto> convertToSeedDataDtoList(List<Seed> seeds) {
         return seeds.stream()
                 .map(SeedDataDtoFactory::createSeedDataDto)
                 .collect(Collectors.toList());
     }
 
+    /*Prepare data to save in file and calls the method of cswWriter*/
     private void writeDataToFile(List<SeedDataDto> seedDataDtos) {
         List<String> seedData = seedDataDtos.stream()
                 .map(SeedDataDto::getSeedData)

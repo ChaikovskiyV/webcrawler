@@ -20,6 +20,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @author Viktar Chaikouski
+ * <p>
+ * The type SeedServiceImplTest.
+ * <p>
+ * Includes tests for testing the methods of SeedServiceImpl class
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SeedServiceImplTest {
     private static final String FIRST_URL = "firstUrl";
@@ -49,6 +56,9 @@ class SeedServiceImplTest {
     @InjectMocks
     private SeedServiceImpl seedService;
 
+    /**
+     * Init.
+     */
     @BeforeAll
     void init() {
         documents = List.of(
@@ -69,6 +79,9 @@ class SeedServiceImplTest {
                 new SeedDataDto(THIRD_URL, TERM_REPETITION));
     }
 
+    /**
+     * SetsUp.
+     */
     @BeforeEach
     void setUp() {
         requestParams = new HashMap<>();
@@ -82,11 +95,19 @@ class SeedServiceImplTest {
         Mockito.doReturn(seeds).when(seedDaoMock).getAllSeeds();
     }
 
+    /**
+     * TearDown.
+     *
+     * @throws Exception the exception
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Tests the addSeedData method when url and terms parameters are provided.
+     */
     @Test
     void addSeedDataTestWhenUrlAndTermsParametersProvided() {
         Mockito.when(seedDaoMock.addSeed(Mockito.any(Seed.class))).thenReturn(seeds.get(0), seeds.get(1), seeds.get(2));
@@ -95,6 +116,9 @@ class SeedServiceImplTest {
         assertEquals(seedData, result);
     }
 
+    /**
+     * Tests the addSeedData method when no parameters are provided.
+     */
     @Test
     void addSeedDataTestWhenNoParametersProvided() {
         List<SeedDataDto> result = seedService.addSeedData(null, null);
@@ -102,6 +126,9 @@ class SeedServiceImplTest {
         assertEquals(expectedSeedData, result);
     }
 
+    /**
+     * Tests the addSeedData method when url parameter is not provided.
+     */
     @Test
     void addSeedDataTestWhenUrlParameterNotProvided() {
         List<SeedDataDto> result = seedService.addSeedData(null, "terms");
@@ -109,6 +136,9 @@ class SeedServiceImplTest {
         assertEquals(expectedSeedData, result);
     }
 
+    /**
+     * Tests the addSeedData method when terms parameter is not provided.
+     */
     @Test
     void addSeedDataTestWhenTermsParameterNotProvided() {
         List<SeedDataDto> result = seedService.addSeedData("any url", null);
@@ -116,6 +146,9 @@ class SeedServiceImplTest {
         assertEquals(expectedSeedData, result);
     }
 
+    /**
+     * Tests the getSeedData method when no request parameters are provided.
+     */
     @Test
     void getSeedDataTestWhenNoRequestParametersProvided() {
         List<SeedDataDto> result = seedService.getSeedData(requestParams);
@@ -123,6 +156,9 @@ class SeedServiceImplTest {
         assertEquals(seedData, result);
     }
 
+    /**
+     * Tests the getSeedData method when search and limit parameters are provided.
+     */
     @Test
     void getSeedDataTestWhenSearchAndLimitParametersProvided() {
         Mockito.doReturn(List.of(seeds.get(0), seeds.get(1))).when(seedDaoMock)
@@ -134,6 +170,9 @@ class SeedServiceImplTest {
         assertEquals(expectedSeedData, result);
     }
 
+    /**
+     * Tests the getSeedData method when only search parameter is provided.
+     */
     @Test
     void getSeedDataTestWhenOnlySearchParameterProvided() {
         Mockito.doReturn(List.of(seeds.get(1))).when(seedDaoMock).getSeedsBySearchParam(Mockito.anyString());
@@ -144,6 +183,9 @@ class SeedServiceImplTest {
         assertEquals(expectedSeedData, result);
     }
 
+    /**
+     * Tests the getSeedData method when only limit parameter is provided.
+     */
     @Test
     void getSeedDataTestWhenOnlyLimitParameterProvided() {
         Mockito.doReturn(seeds).when(seedDaoMock).getSeedsWithLimitedResult(Mockito.anyInt());

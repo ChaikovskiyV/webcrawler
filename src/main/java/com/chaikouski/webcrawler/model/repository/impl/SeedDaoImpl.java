@@ -10,6 +10,13 @@ import java.util.List;
 
 import static com.chaikouski.webcrawler.model.repository.QueriesStorage.*;
 
+/**
+ * @author Viktar Chaikouski
+ *
+ * The type SeedDaoImpl.
+ *
+ * Implements interface SeedDao
+ */
 @Repository
 public class SeedDaoImpl implements SeedDao {
     @PersistenceContext
@@ -54,6 +61,7 @@ public class SeedDaoImpl implements SeedDao {
                 .getResultList();
     }
 
+    /*Builds string as '%param%'*/
     private String buildLikeParam(String param) {
         String delimiter = "%";
         return new StringBuilder(delimiter)
