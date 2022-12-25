@@ -44,7 +44,7 @@ public class SeedServiceImpl implements SeedService {
     public List<SeedDataDto> addSeedData(String url, String terms) {
         List<Seed> seeds = new ArrayList<>();
 
-        if (url != null && terms != null) {
+        if (url != null && !url.isBlank() && terms != null && !terms.isBlank()) {
             getSeedList(url, terms).forEach(seed -> {
                 Seed existed = findExistedSeed(seed);
 
